@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Weather App</h2>
+    <input type="text" id="city" placeholder="Enter city name">
+    <button onclick="getWeather()">Get Weather</button>
+    
+    <div id="weather">
+        <h3 id="city-name"></h3>
+        <p id="temp"></p>
+        <p id="desc"></p>
+        <img id="icon" src="https://img.freepik.com/free-vector/watercolor-weather-effects-collection_23-2149115331.jpg" alt="Weather Icon">
+    </div>
+
+    <script>
+        function getWeather() {
+            const city = document.getElementById("city").value;
+            fetch("/get_weather", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ city: city })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                document.getElementById("weather").style.display = "block";
+                document.getElementById("city-name").innerText = data.city;
+                document.getElementById("temp").innerText = `Temperature: ${data.temp}°C`;
+                document.getElementById("desc").innerText = `Condition: ${data.description}`;
+                document.getElementById("icon").src = `http://openweathermap.org/img/wn/${data.icon}.png`;
+            });
+        }
+    </script>
+</body>
+</html>
